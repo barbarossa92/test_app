@@ -1,3 +1,4 @@
+# coding=utf-8
 import json
 from django.test import TestCase, Client
 from django.core.urlresolvers import reverse
@@ -13,7 +14,7 @@ class CommentsTest(TestCase):
         response = self.client.post(reverse('load_comments', kwargs={'slug': self.materials.slug}))
         self.assertEqual(response.status_code, 400)
 
-    def test_load_comments_must_be_status_code_200(self):
+    def test_load_comments_response_must_be_with_status_code_200(self):
         comment = CommentFactory(material=self.materials)
         response = self.client.get(reverse('load_comments', kwargs={'slug': comment.material.slug}),
                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
