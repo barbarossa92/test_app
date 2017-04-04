@@ -1,0 +1,27 @@
+{% extends 'Main/index.html' %}
+{% block content %}
+    {% if materials_list %}
+        <div class="container">
+            <div class="row6">
+            {% for item in materials_list %}
+                {% if item.published %}
+                <h3><a href="{% url 'details' slug=item.slug %}">{{ item.title }}</a></h3>
+                <p>{{ item.description|truncatewords:10|safe }}</p>
+                {% endif %}
+            {% endfor %}
+            {% if is_paginated %}
+                {% if  page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">Назад</a> |
+                {% endif %}
+                страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                {% if  page_obj.has_next %}|
+                <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
+                {% endif %}
+            {% endif %}
+            </div>
+            <br/>
+        </div>
+    {% else %}
+    <h2>Список материалов пуст.</h2>
+{% endif %}
+{% endblock %}

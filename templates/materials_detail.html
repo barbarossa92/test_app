@@ -1,0 +1,53 @@
+{% extends "Main/index.html" %}
+{% load staticfiles %}
+{% block title %}
+    <title>{{ materials.title }}</title>
+    {% endblock %}
+    {% block content %}
+    <div class="container">
+    <h1>{{ materials.title }}</h1>
+    <h3>{{ materials.description|safe }}</h3>
+    <p>Дата создания: {{ materials.date|date:"M d, Y" }}</p>
+    <br/>
+    {% csrf_token %}
+    <button type="submit" class="btn-success" id="load_comment">Комментарии:</button>
+
+    <div id="comment_list">
+    </div>
+    <div id="comment_block" >{% include 'Main/comment_form.html' %}</div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>
+    $('#text').prop('required',true);
+    $('#comment_block').hide();
+    var clicked = false;
+    $('#load_comment').click(function(){
+    if (clicked) return;
+    clicked = true;
+    $.get('{% url 'load_comments' slug=materials.slug %}', function(data){
+    $.each($.parseJSON(data), function (key, value) {
+    $('#comment_list').append("<h4><strong>" + value.fields.text + "</strong></h4><p>" + value.fields.date + "</p>");
+    });
+    $('#comment_block').show();
+    });
+    });
+    </script>
+    <script>
+    $(function(){
+    $('#add_comment').click(function (e) {
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: '{% url 'add_comment' slug=materials.slug %}',
+        data: $('form').serialize(),
+        dataType: 'json',
+        success: function (data) {
+            $('#comment_list').append("<h4><strong>" + data.text + "</strong></h4><p>" + data.date + "</p>");
+            $('#text').val('');
+                }
+            })
+    })
+})
+    </script>
+        <script src="{% static 'js/validation.js' %}"></script>
+{% endblock %}
